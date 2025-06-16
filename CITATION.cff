@@ -1,0 +1,11 @@
+cff-version: 1.0.0
+message: "If you use this software, please cite it as below."
+authors:
+- family-names: "Zappacosta"
+  given-names: "Ingvar"
+  orcid: "https://orcid.org/0009-0007-0876-7395"
+title: "Nonlinear electron-phonon interactions in Migdal-Eliashberg theory"
+version: 1.0.0
+doi: 10.1103/ths6-1wgp
+date-released: 2025-14-03
+url: "https://github.com/Zappacostai/Nonlinear-Migdal-Eliashberg-theory"
