@@ -29,7 +29,7 @@ function ReΔ_f(α²F::F, u, ωc, ω₀, λ₀, λ₁, ϵ, ωcrit, T, maxiter, N
     P = Int64(round(N/100))
 
     ω1 = LinRange(-fineω, fineω, 2(N-P));      ω2 = LinRange(fineω, maxω, P) .+ abs(ω1[1]-ω1[2]);         M = size(kₘ,1)
-    ω = [-ω2; ω1; ω2]
+    ω = [-reverse(ω2); ω1; ω2]
     dω = [abs(ω[1] - ω[2]); abs.(ω[1:end-1] .- ω[2:end])]
 
     Num = zeros(ComplexF64,2N);         Den = zeros(ComplexF64,2N);     

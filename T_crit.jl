@@ -1,31 +1,31 @@
 using LinearAlgebra, QuadGK
 
-function T_crit(α²F::F, u, ωc, dT, ω₀, λ₀, λ₁, ϵ, ωcrit, zmin, zmax) where {F<:Function}
+function T_crit(α²F::F, u, ωc, dT, ω₀, λ₀, λ₁, ϵ, ωcrit, zmin, zmax, minT) where {F<:Function}
 
     function λcalc(α²F::F, ω₀, λ₀, λ₁, ϵ, ωcrit, ωₘ, zmin, zmax) where {F<:Function}
-        return quadgk(x-> 2α²F(x,ω₀,λ₀,λ₁,ϵ,ωcrit,zmin,zmax).*(x./(x^2 .+ ωₘ.^2)), zmin, zmax, rtol=1e-4)[1]
+        return quadgk(x-> 2α²F(x,ω₀,λ₀,λ₁,ϵ,ωcrit,zmin,zmax).*(x./(x^2 .+ ωₘ.^2)), zmin, zmax, rtol=1e-5)[1] 
     end
 
     kB = 8.617333e-5 #eV/K
-    maxT = 100000
+    maxT = 10000
 
-    λ0 = λ₀;    λ1 = λ₁
+    λ0 = λ₀
 
-    j = 0;      T = dT;     C = -1
+    j = 0;      T = maxT;     C = -1
 
     while abs(T - C) > dT
 
-        λ1 = λ₁*(1 + 2 / (exp(ω₀/(kB*T)) - 1))
-
         j += 1
 
-        N = Int64(round(minimum([ωc/(2π*kB*T)-1/2 ωc/(2π*kB*0.25)-1/2])))
+        N = Int64(round(minimum([ωc/(2π*kB*T)-1/2 ωc/(2π*kB*minT)-1/2])))
         Z = zeros(2N)
         M = zeros(2N,2N)
 
         n = -N:N-1;     ω = (2n.+1)π*kB*T
 
         qₙ = 2(n.+N)π*kB*T
+
+        λ1 = λ₁*(1 + 2 / (exp(ω₀/(kB*T)) - 1))
 
         λ = λcalc(α²F, ω₀, λ0, λ1, ϵ, ωcrit, qₙ, zmin, zmax)
 
@@ -49,11 +49,7 @@ function T_crit(α²F::F, u, ωc, dT, ω₀, λ₀, λ₁, ϵ, ωcrit, zmin, zma
         maxT = maxT/2
 
         if D > 0
-            if j != 1
-                T -= maxT
-            else
-                return 0
-            end
+            T -= maxT
         else
             T += maxT
             if j == 2
